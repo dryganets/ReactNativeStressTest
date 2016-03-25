@@ -123,4 +123,4 @@ var styles = StyleSheet.create({
   },
 });
 
-AppRegistry.registerComponent('ReactNativeStressTest', () => StressTest);
+AppRegistry.registerComponent('Test', () => Test);
