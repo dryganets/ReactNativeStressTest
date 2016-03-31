@@ -13,6 +13,8 @@ import React, {
   View,
 } from 'react-native';
 
+import SGListView from 'react-native-sglistview';
+
 //var API_KEY = 'mxpk7pwqphwjsdu8yp7eppta';
 
 var API_KEY = '7waqfqbprs7pajbz28mqf6vz'
@@ -21,13 +23,17 @@ var PAGE_SIZE = 25;
 var PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
 var REQUEST_URL = API_URL + PARAMS;
 
+var data = [];
+
 class Test extends Component {
   constructor(props) {
     super(props);
     this.state = {
       dataSource: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2,
-      }),
+      },
+
+    ),
       loaded: false,
     };
   }
@@ -40,18 +46,24 @@ class Test extends Component {
     fetch(REQUEST_URL)
       .then((response) => response.json())
       .then((responseData) => {
-        var movies = [];
+        data = responseData.movies;
+        /*var movies = [];
         for (var i = 0 ; i < 1000; i++) {
           for(var j = 0; j < responseData.movies.length; j++) {
             movies.push(responseData.movies[j]);
           }
-        }
+        } */
+
         this.setState({
-          dataSource: this.state.dataSource.cloneWithRows(movies),
+          dataSource: this.state.dataSource.cloneWithRows(data),
           loaded: true,
         });
       })
       .done();
+  }
+
+  onEndReached() {
+    this.state.dataSource.cloneWithRows(data);
   }
 
   render() {
@@ -60,10 +72,12 @@ class Test extends Component {
     }
 
     return (
-      <ListView
+      <SGListView
         dataSource={this.state.dataSource}
         renderRow={this.renderMovie}
         style={styles.listView}
+        scrollRenderAheadDistance={PAGE_SIZE}
+        onEndReached={this.onEndReached}
       />
     );
   }
@@ -93,6 +107,8 @@ class Test extends Component {
     );
   }
 }
+
+
 
 var styles = StyleSheet.create({
   container: {
